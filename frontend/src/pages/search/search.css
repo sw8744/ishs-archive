@@ -1,0 +1,11 @@
+#searchBanner {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#searchSubjectDiv, #searchYearDiv, #searchSeasonDiv, #searchTermDiv, #searchTeacherDiv {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
