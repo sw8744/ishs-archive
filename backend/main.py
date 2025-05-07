@@ -41,9 +41,10 @@ def splitTeacher(teacher):
 
 # 저장된 시험지 목록을 받아오는 API
 @app.get("/api/get")
-def get(subject: str = None, year: int = None, grade: int = None, season: int = None, term: int = None,
+def get(id: str = None, subject: str = None, year: int = None, grade: int = None, season: int = None, term: int = None,
         teacher: str = None): # 시험지 목록을 불러오는 API
     filter = { # 시험지 검색 필터
+        "id": id,
         "subject": subject,
         "year": year,
         "grade": grade,
@@ -169,6 +170,7 @@ async def post(
 
     return {"status": "success"}
 
+# 시험지 PDF 파일을 업로드하는 API
 @app.post("/api/uploadpdf")
 async def uploadpdf(file: UploadFile = File(...)):
     pdf_name = file.filename
@@ -179,6 +181,13 @@ async def uploadpdf(file: UploadFile = File(...)):
         f.write(pdf_data)
 
     return {"status": "success"}
+
+@app.get("/api/getanswer")
+def getanswer(id: str):
+    answer_path = f"./pdf/{id}_answer.pdf"
+    if not os.path.exists(answer_path):
+        return {"status": "not found"}
+    return FileResponse(answer_path, media_type="application/pdf", filename=f"{id}_answer.pdf")
 
 if __name__ == "__main__":
     import uvicorn

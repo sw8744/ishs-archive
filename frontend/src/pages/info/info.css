@@ -1,0 +1,5 @@
+#pdfContainer {
+  width: 100vw;
+  height: 87.5vh;
+  overflow: hidden;
+}

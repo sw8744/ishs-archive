@@ -50,12 +50,11 @@ function Search() {
         }
         const response = await fetch('http://127.0.0.1:5000/api/get' + query);
         const data = await response.json();
-        console.log(data);
         setPosts(data);
     };
 
     const handlePdf = async (id) => {
-        window.location.href = 'http://127.0.0.1:5000/api/getpdf?id=' + id;
+        navigate('/info?id=' + id);
     }
 
     useEffect(() => {
