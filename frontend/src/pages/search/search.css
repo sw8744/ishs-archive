@@ -2,10 +2,94 @@
     display: flex;
     gap: 10px;
     align-items: center;
+    justify-content: center;
+    height: 5vh;
+    background-color: #f0f0f0;
+    margin-top: 10px;
+    font-family: 'RixWhiteSans';
+    font-weight: bold;
+    font-size: 120%;
 }
 
 #searchSubjectDiv, #searchYearDiv, #searchSeasonDiv, #searchTermDiv, #searchTeacherDiv {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+#searchSubjectSelect, #searchYearSelect, #searchSeasonSelect, #searchTermSelect, #searchTeacherSelect {
+    width: 12vw;
+    height: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+#searchButton {
+    height: 30px;;
+    cursor: pointer;
+    font-family: 'RixWhiteSans';
+    font-weight: bold;
+}
+
+#searchResultDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: scroll; 
+    overflow-x: hidden; 
+    height: 87.5vh;
+}
+
+.searchResultItemInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    font-family: 'RixWhiteSans';
+    font-weight: bold;
+}
+
+#searchResultList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 75%;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.searchResultItemSubject {
+    width: 35%;
+    text-align: center;
+}
+
+.searchResultItemGrade {
+    width: 10%;
+    text-align: center;
+}
+
+.searchResultItemYear {
+    width: 20%;
+    text-align: center;
+}
+
+.searchResultItemSeason {
+    width: 20%;
+    text-align: center;
+}
+
+.searchResultItemTerm {
+    width: 10%;
+    text-align: center;
+}
+
+.searchResultItemTeacher {
+    width: 30%;
+    text-align: center;
+}
+
+.searchResultItemIsDigital {
+    width: 10%;
+    text-align: center;
 }

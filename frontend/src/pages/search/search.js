@@ -1,6 +1,7 @@
 import './search.css';
 import Header from '../../components/header/header';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Search() {
     const [subject, setSubject] = useState();
@@ -9,6 +10,7 @@ function Search() {
     const [season, setSeason] = useState();
     const [term, setTerm] = useState();
     const [teacher, setTeacher] = useState();
+    const navigate = useNavigate();
     let userFilter = {
         subject: subject,
         grade: grade,
@@ -51,6 +53,10 @@ function Search() {
         console.log(data);
         setPosts(data);
     };
+
+    const handlePdf = async (id) => {
+        window.location.href = 'http://127.0.0.1:5000/api/getpdf?id=' + id;
+    }
 
     useEffect(() => {
         fetchFilter();
@@ -109,6 +115,23 @@ function Search() {
                         </select>
                     </div>
                     <button id='searchButton' onClick={() => {fetchSearch()}}>검색</button>
+                </div>
+                <div id='searchResultDiv'>
+                    <div id='searchResultList'>
+                        {posts.map((post) => (
+                            <div className='searchResultItem' key={post.id} onClick={() => handlePdf(post.id)}>
+                                <div className='searchResultItemInfo'>
+                                    <div className='searchResultItemSubject'>{post.subject}</div>
+                                    <div className='searchResultItemGrade'>{post.grade}학년</div>
+                                    <div className='searchResultItemYear'>{post.year}학년도</div>
+                                    <div className='searchResultItemSeason'>{post.season}학기</div>
+                                    <div className='searchResultItemTerm'>{post.term}회고사</div>
+                                    <div className='searchResultItemTeacher'>{post.teacher}</div>
+                                    <div className='searchResultItemIsDigital'>{post.isdigital === 1 ? '디지털' : '스캔본'}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
