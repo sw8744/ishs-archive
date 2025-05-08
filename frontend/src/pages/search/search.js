@@ -126,7 +126,7 @@ function Search() {
                                     <div className='searchResultItemSeason'>{post.season}학기</div>
                                     <div className='searchResultItemTerm'>{post.term}회고사</div>
                                     <div className='searchResultItemTeacher'>{post.teacher}</div>
-                                    <div className='searchResultItemIsDigital'>{post.isdigital === 1 ? '디지털' : '스캔본'}</div>
+                                    <div className='searchResultItemIsDigital'>{post.answer === 1 ? '답지 있음' : '답지 없음'}</div>
                                 </div>
                             </div>
                         ))}

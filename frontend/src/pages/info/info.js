@@ -28,10 +28,14 @@ function Info() {
             <div id='searchBanner'>
                 {info.year}학년도 {info.grade}학년 {info.season}학기 {info.term}회고사 (출제 : {info.teacher})
                 <button id='searchButton' onClick={() => { window.location.href = 'http://127.0.0.1:5000/api/getpdf?id=' + id }}>다운로드</button>
-                <button id='searchButton' onClick={() => { window.location.href = 'http://127.0.0.1:5000/api/getanswer?id=' + id }}>정답지 다운로드</button>
+                {
+                    info.answer === 1 
+                    ? <button id='searchButton' onClick={() => { window.location.href = 'http://127.0.0.1:5000/api/getanswer?id=' + id }}>답지 다운로드</button>
+                    : ""
+                }
             </div>
             <div id="pdfContainer">
-                <iframe id='pdfFrame' src={'http://127.0.0.1:5000/api/getpdf?id=' + id} width="100%" height="100%"></iframe>
+                <iframe id='pdfFrame' src={'http://127.0.0.1:5000/api/getpdfview?id=' + id} width="100%" height="100%"></iframe>
             </div>
         </div>
     );

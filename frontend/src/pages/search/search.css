@@ -47,6 +47,7 @@
     gap: 10px;
     padding: 10px;
     font-family: 'RixWhiteSans';
+    font-size: 1vw;
     font-weight: bold;
     cursor: pointer;
 }

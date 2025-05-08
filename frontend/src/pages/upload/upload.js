@@ -10,11 +10,13 @@ function Upload() {
     const [season, setSeason] = useState();
     const [term, setTerm] = useState();
     const [teacher, setTeacher] = useState();
-    const [type, setType] = useState('test');
+    const [type, setType] = useState('tests');
     const [file, setFile] = useState(null);
+    const [fileUrl, setFileUrl] = useState(null);
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
+        setFileUrl(URL.createObjectURL(e.target.files[0]));
     };
 
     const navigate = useNavigate();
@@ -38,23 +40,41 @@ function Upload() {
         formData.append('teacher', teacher);
         formData.append('type', type);
 
-        const response = await fetch('http://127.0.1:5000/api/upload', {
-            method: 'POST',
-            body: formData,
-        });
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            alert('업로드 성공');
-            navigate('/search');
-        } else {
-            alert('업로드 실패');
+        let id = Math.random().toString(36).substr(2,11);
+        formData.append('id', id);
+        if (type === 'tests') {
+            const response = await fetch('http://127.0.1:5000/api/uploadtests', {
+                method: 'POST',
+                body: formData,
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                alert('업로드 성공');
+                navigate('/search');
+            } else {
+                alert('업로드 실패');
+            }
+        }
+        else if (type === 'answers') {
+            const response = await fetch('http://127.0.1:5000/api/uploadanswers', {
+                method: 'POST',
+                body: formData,
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                alert('업로드 성공');
+                navigate('/search');
+            } else {
+                alert('업로드 실패');
+            }
         }
     };
     return (
         <div>
             <Header />
-            <div id='searchBanner'>
+            <div id='uploadBanner'>
                 <div id='searchSubjectDiv'>
                         <div id='searchSubjectTitle'>과목</div>
                         <input id='searchSubjectInput' type='text' placeholder='과목(띄어쓰기까지 정확히!)' onChange={(e) => setSubject(e.target.value)} />
@@ -62,6 +82,10 @@ function Upload() {
                     <div id='searchYearDiv'>
                         <div id='searchYearTitle'>연도</div>
                         <input id='searchYearInput' type='text' placeholder='연도' onChange={(e) => setYear(e.target.value)} />
+                    </div>
+                    <div id='searchYearDiv'>
+                        <div id='searchYearTitle'>학년</div>
+                        <input id='searchYearInput' type='text' placeholder='학년' onChange={(e) => setGrade(e.target.value)} />
                     </div>
                     <div id='searchSeasonDiv'>
                         <div id='searchSeasonTitle'>학기</div>
@@ -77,15 +101,15 @@ function Upload() {
                     </div>
                     <div id='searchTestDiv'>
                         <select id='searchTestSelect' onChange={(e) => setType(e.target.value)}>
-                            <option value="test">시험지</option>
-                            <option value="answer">답지</option>
+                            <option value="tests">시험지</option>
+                            <option value="answers">답지</option>
                         </select>
                     </div>
                     <button id='searchButton' onClick={() => {handleUpload()}}>업로드</button>
             </div>
             <div id="pdfContainerDiv">
                 <input type="file" id="fileInput" accept='application/pdf' onChange={(e) => {handleFileChange(e)}} />
-                <iframe id='pdfFrame' src={file ? URL.createObjectURL(file) : ''} width="100%" height="100%"></iframe>
+                <iframe id='pdfFrame' src={fileUrl ? fileUrl : ''} width="100%" height="100%"></iframe>
             </div>
         </div>
     );

@@ -91,10 +91,26 @@ def get(id: str = None, subject: str = None, year: int = None, grade: int = None
     return res
 
 # 시험지 PDF 파일을 반환하는 API
-@app.get("/api/getpdf")
+@app.get("/api/getpdfview")
 def getpdf(id: str):
     pdf_path = f"pdf/{id}.pdf"
     return FileResponse(pdf_path, media_type="application/pdf")
+
+@app.get("/api/getpdf")
+def getpdf(id: str):
+    pdf_path = f"pdf/{id}.pdf"
+    conn = getDBConnection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM tests WHERE id = ?", (id,))
+    rows = cursor.fetchall()
+    if len(rows) == 0:
+        return {"status": "not found"}
+    result = convertToDict(rows)
+    for item in result:
+        item["teacher"] = splitTeacher(item["teacher"])
+    conn.close()
+    filename = f"{result[0]['year']}학년도_{result[0]['grade']}학년_{result[0]['season']}학기_{result[0]['term']}_회고사_{result[0]['subject']}.pdf"
+    return FileResponse(pdf_path, media_type="application/pdf", filename=filename)
 
 @app.get("/api/getinfo")
 def getinfo():
@@ -134,7 +150,7 @@ def getinfo():
 
     return returnValue
 
-@app.post("/api/uploadinfo")
+@app.post("/api/uploadtests")
 async def post(
     id: str = Form(...),
     subject: str = Form(...),
@@ -143,9 +159,7 @@ async def post(
     season: int = Form(...),
     term: int = Form(...),
     teacher: str = Form(...),
-    mean: float = Form(...),
-    sigma: float = Form(...),
-    isdigital: int = Form(...)
+    file: UploadFile = File(...)
 ):
     # DB 연결
     conn = getDBConnection()
@@ -162,18 +176,67 @@ async def post(
 
     # DB에 저장
     cursor.execute(
-        "INSERT INTO tests (id, subject, year, grade, season, term, teacher, mean, sigma, isdigital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (id, subject, year, grade, season, term, teacher, mean, sigma, isdigital)
+        "INSERT INTO tests (id, subject, year, grade, season, term, teacher, answer) VALUES (?, ?, ?, ?, ?, ?, ?, FALSE)",
+        (id, subject, year, grade, season, term, teacher)
     )
+
     conn.commit()
     conn.close()
 
+    pdf_name = f"{id}.pdf"
+    pdf_data = await file.read()
+    save_path = f"pdf/{pdf_name}"
+    os.makedirs("pdf", exist_ok=True)
+    with open(save_path, "wb") as f:
+        f.write(pdf_data)
+
     return {"status": "success"}
 
-# 시험지 PDF 파일을 업로드하는 API
-@app.post("/api/uploadpdf")
-async def uploadpdf(file: UploadFile = File(...)):
-    pdf_name = file.filename
+@app.post("/api/uploadanswers")
+async def postanswer(
+    id: str = Form(...),
+    subject: str = Form(...),
+    year: int = Form(...),
+    grade: int = Form(...),
+    season: int = Form(...),
+    term: int = Form(...),
+    teacher: str = Form(...),
+    file: UploadFile = File(...)
+):
+    # DB 연결
+    conn = getDBConnection()
+    cursor = conn.cursor()
+
+    # 이미 있는지 체크
+    cursor.execute("SELECT * FROM answers WHERE id = ?", (id, ))
+    rows = cursor.fetchall()
+    if len(rows) > 0:
+        return {"status": "already exists"}
+
+    # 기존 시험지 id 가져오기
+    cursor.execute(
+        "SELECT * FROM tests WHERE subject = ? AND year = ? AND grade = ? AND season = ? AND term = ? AND teacher = ?",
+        (subject, year, grade, season, term, teacher)
+    )
+    rows = cursor.fetchall()
+    if len(rows) == 0:
+        return {"status": "not found"}
+
+    testId = rows[0]["id"]
+
+    # DB에 저장
+    cursor.execute(
+        "INSERT INTO answers (id, test) VALUES (?, ?)",
+        (id, testId)
+    )
+
+    conn.commit()
+
+    cursor.execute("UPDATE tests SET answer = TRUE WHERE id = ?", (testId, ))
+
+    conn.close()
+
+    pdf_name = f"{testId}_answer.pdf"
     pdf_data = await file.read()
     save_path = f"pdf/{pdf_name}"
     os.makedirs("pdf", exist_ok=True)
@@ -187,7 +250,19 @@ def getanswer(id: str):
     answer_path = f"./pdf/{id}_answer.pdf"
     if not os.path.exists(answer_path):
         return {"status": "not found"}
-    return FileResponse(answer_path, media_type="application/pdf", filename=f"{id}_answer.pdf")
+    conn = getDBConnection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM tests WHERE id = ?", (id,))
+    rows = cursor.fetchall()
+    if len(rows) == 0:
+        return {"status": "not found"}
+    result = convertToDict(rows)
+    for item in result:
+        item["teacher"] = splitTeacher(item["teacher"])
+    conn.close()
+    filename = f"{result[0]['year']}학년도_{result[0]['grade']}학년_{result[0]['season']}학기_{result[0]['term']}회고사_{result[0]['subject']}_답지.pdf"
+
+    return FileResponse(answer_path, media_type="application/pdf", filename=filename)
 
 if __name__ == "__main__":
     import uvicorn
