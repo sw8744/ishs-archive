@@ -43,7 +43,7 @@ function Upload() {
         let id = Math.random().toString(36).substr(2,11);
         formData.append('id', id);
         if (type === 'tests') {
-            const response = await fetch('http://127.0.1:5000/api/uploadtests', {
+            const response = await fetch('http://on-zone.site:5000/api/uploadtests', {
                 method: 'POST',
                 body: formData,
             });
@@ -57,7 +57,7 @@ function Upload() {
             }
         }
         else if (type === 'answers') {
-            const response = await fetch('http://127.0.1:5000/api/uploadanswers', {
+            const response = await fetch('http://on-zone.site:5000/api/uploadanswers', {
                 method: 'POST',
                 body: formData,
             });

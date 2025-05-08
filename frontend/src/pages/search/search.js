@@ -23,7 +23,7 @@ function Search() {
     const [posts, setPosts] = useState([]);
 
     const fetchFilter = async () => {
-        const response = await fetch('http://127.0.0.1:5000/api/getinfo');
+        const response = await fetch('http://on-zone.site:5000/api/getinfo');
         const data = await response.json();
         setFilter(data);
     };
@@ -48,7 +48,7 @@ function Search() {
         if (userFilter.teacher) {
             query += `teacher=${userFilter.teacher}&`;
         }
-        const response = await fetch('http://127.0.0.1:5000/api/get' + query);
+        const response = await fetch('http://on-zone.site:5000/api/get' + query);
         const data = await response.json();
         setPosts(data);
     };
