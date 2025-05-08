@@ -230,10 +230,10 @@ async def postanswer(
         (id, testId)
     )
 
-    conn.commit()
 
     cursor.execute("UPDATE tests SET answer = TRUE WHERE id = ?", (testId, ))
 
+    conn.commit()
     conn.close()
 
     pdf_name = f"{testId}_answer.pdf"
