@@ -11,7 +11,7 @@ function Search() {
     const [term, setTerm] = useState();
     const [teacher, setTeacher] = useState();
     const navigate = useNavigate();
-    let userFilter = {
+    let userFilter = {  // 사용자 필터
         subject: subject,
         grade: grade,
         year: year,
@@ -22,13 +22,13 @@ function Search() {
     const [filter, setFilter] = useState();
     const [posts, setPosts] = useState([]);
 
-    const fetchFilter = async () => {
+    const fetchFilter = async () => {   // 필터 선택 불러오기
         const response = await fetch('http://on-zone.site:5000/api/getinfo');
         const data = await response.json();
         setFilter(data);
     };
 
-    const fetchSearch = async () => {
+    const fetchSearch = async () => {   // 필터 설정
         let query = "?";
         if (userFilter.subject) {
             query += `subject=${userFilter.subject}&`;
@@ -48,7 +48,7 @@ function Search() {
         if (userFilter.teacher) {
             query += `teacher=${userFilter.teacher}&`;
         }
-        const response = await fetch('http://on-zone.site:5000/api/get' + query);
+        const response = await fetch('http://on-zone.site:5000/api/get' + query);   // 필터에 맞는 시험지 검색
         const data = await response.json();
         setPosts(data);
     };
@@ -117,7 +117,7 @@ function Search() {
                 </div>
                 <div id='searchResultDiv'>
                     <div id='searchResultList'>
-                        {posts.map((post) => (
+                        {posts.map((post) => (  // 시험지 결과 출력
                             <div className='searchResultItem' key={post.id} onClick={() => handlePdf(post.id)}>
                                 <div className='searchResultItemInfo'>
                                     <div className='searchResultItemSubject'>{post.subject}</div>

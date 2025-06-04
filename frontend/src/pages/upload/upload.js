@@ -14,14 +14,14 @@ function Upload() {
     const [file, setFile] = useState(null);
     const [fileUrl, setFileUrl] = useState(null);
 
-    const handleFileChange = (e) => {
+    const handleFileChange = (e) => {   // 파일 관리
         setFile(e.target.files[0]);
         setFileUrl(URL.createObjectURL(e.target.files[0]));
     };
 
     const navigate = useNavigate();
 
-    const handleUpload = async () => {
+    const handleUpload = async () => {  // 파일 업로드
         const formData = new FormData();
         if (!file) {
             alert('파일을 선택해주세요');
@@ -43,7 +43,7 @@ function Upload() {
         let id = Math.random().toString(36).substr(2,11);
         formData.append('id', id);
         if (type === 'tests') {
-            const response = await fetch('http://on-zone.site:5000/api/uploadtests', {
+            const response = await fetch('http://on-zone.site:5000/api/uploadtests', {  // 시험지 업로드
                 method: 'POST',
                 body: formData,
             });
@@ -57,7 +57,7 @@ function Upload() {
             }
         }
         else if (type === 'answers') {
-            const response = await fetch('http://on-zone.site:5000/api/uploadanswers', {
+            const response = await fetch('http://on-zone.site:5000/api/uploadanswers', {    // 답지 업로드
                 method: 'POST',
                 body: formData,
             });

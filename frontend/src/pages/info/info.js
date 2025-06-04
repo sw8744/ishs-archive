@@ -11,7 +11,7 @@ function Info() {
     const [query, setQuery] = useSearchParams();
     const id = query.get('id');
 
-    const fetchInfo = async (id) => {
+    const fetchInfo = async (id) => {   // 시험지 정보 불러오기
         const response = await fetch('http://on-zone.site:5000/api/get?id=' + id);
         const data = await response.json();
         setInfo(data[0]);

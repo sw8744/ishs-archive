@@ -9,13 +9,13 @@ import Upload from './pages/upload/upload';
 function App() {
   return (
     <div className="App">
-      <Router>
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/info" element={<Info />} />
-        <Route path="/upload" element={<Upload />} />
-      </Routes>
+      <Router>  
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/info" element={<Info />} />
+          <Route path="/upload" element={<Upload />} />
+        </Routes>
     </Router>
     </div>
   );

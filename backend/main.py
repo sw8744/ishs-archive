@@ -62,14 +62,14 @@ def get(id: str = None, subject: str = None, year: int = None, grade: int = None
     # DB 연결
     conn = getDBConnection()
     cursor = conn.cursor()
-    query = "SELECT * FROM tests"
+    query = "SELECT * FROM tests"   # 시험지 목록에서 모든 것을 가져오는 코드
 
     cursor.execute(query)
     rows = cursor.fetchall()
     conn.close()
 
     result = convertToDict(rows)
-    if filter_f == {}:
+    if filter_f == {}:  # 필터가 없을 경우 모든 시험지 반환
         return result
     res = []
     print(filter_f)
@@ -77,7 +77,7 @@ def get(id: str = None, subject: str = None, year: int = None, grade: int = None
         tf = [False for _ in range(len(filter_f))]
         i = 0
         for key, value in filter_f.items():
-            if key == "teacher":
+            if key == "teacher":    # 선생님 필터인 경우 필터에 포함된 선생님이 있는지 확인
                 if filter_f[key] in item[key]:
                     tf[i] = True
             else:
@@ -90,28 +90,31 @@ def get(id: str = None, subject: str = None, year: int = None, grade: int = None
     print(res)
     return res
 
-# 시험지 PDF 파일을 반환하는 API
+# 시험지 PDF 파일 뷰어 창을 띄우는 API
 @app.get("/api/getpdfview")
 def getpdf(id: str):
     pdf_path = f"pdf/{id}.pdf"
     return FileResponse(pdf_path, media_type="application/pdf")
 
+# 시험지 PDF 파일을 다운로드시키는 API
 @app.get("/api/getpdf")
 def getpdf(id: str):
-    pdf_path = f"pdf/{id}.pdf"
+    pdf_path = f"pdf/{id}.pdf"  # 시험지 경로 설정
     conn = getDBConnection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tests WHERE id = ?", (id,))
+    cursor.execute("SELECT * FROM tests WHERE id = ?", (id,)) # 해당 id의 시험지 정보 불러오기
     rows = cursor.fetchall()
-    if len(rows) == 0:
+
+    if len(rows) == 0:  # 해당 시험지가 존재하지 않는 경우
         return {"status": "not found"}
     result = convertToDict(rows)
-    for item in result:
+    for item in result: # 선생님 정보를 리스트로 변환
         item["teacher"] = splitTeacher(item["teacher"])
     conn.close()
     filename = f"{result[0]['year']}학년도_{result[0]['grade']}학년_{result[0]['season']}학기_{result[0]['term']}_회고사_{result[0]['subject']}.pdf"
     return FileResponse(pdf_path, media_type="application/pdf", filename=filename)
 
+# 필터 목록 불러오기 API
 @app.get("/api/getinfo")
 def getinfo():
     # DB 연결
@@ -150,6 +153,7 @@ def getinfo():
 
     return returnValue
 
+# 시험지 업로드 API
 @app.post("/api/uploadtests")
 async def post(
     id: str = Form(...),
@@ -192,6 +196,7 @@ async def post(
 
     return {"status": "success"}
 
+# 시험지 답안지 업로드 API
 @app.post("/api/uploadanswers")
 async def postanswer(
     id: str = Form(...),
@@ -245,6 +250,7 @@ async def postanswer(
 
     return {"status": "success"}
 
+# 시험지 답안지 다운로드 API
 @app.get("/api/getanswer")
 def getanswer(id: str):
     answer_path = f"./pdf/{id}_answer.pdf"

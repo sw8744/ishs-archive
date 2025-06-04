@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 function Main() {
     const navigate = useNavigate();
-    const handleSearchButtonClick = () => {
+    const handleSearchButtonClick = () => { // 검색 버튼 클릭 시 검색 창으로 이동
         navigate('/search');
     };
-    const handleUploadButtonClick = () => {
+    const handleUploadButtonClick = () => { // 업로드 버튼 클릭 시 업로드 창으로 이동
         navigate('/upload');
     };
 
